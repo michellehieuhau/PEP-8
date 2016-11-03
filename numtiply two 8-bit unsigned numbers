@@ -1,0 +1,60 @@
+;Purpose: Program to numtiply two 8-bit unsigned numbers
+ 
+BR main
+num1: .BLOCK 2 ;first number to be multiplied
+num2: .BLOCK 2 ;second number to be multiplied
+ans: .BLOCK 2 ;result of multiplication
+i: .BLOCK 2 ;iterator to count thru the
+max: .EQUATE 8
+ 
+;obtain the two numbers to be multiplied
+main: DECI num1,d
+DECI num2,d
+ 
+;output first part of feedback to user
+DECO num1,d
+STRO str1,d
+DECO num2,d
+STRO str2,d
+ 
+;initialize i to 0
+LDA 0x0000, i
+STA i,d
+ 
+;check if i &amp;lt; max and branch to &amp;quot;end&amp;quot; if i &amp;gt;= max
+loop: LDX i,d
+CPX max,i
+BRGE end
+ 
+;see if the LSB of num1 == 0
+LDA num1,d
+ANDA 0x0001,i
+CPA 0x0001,i
+;if LSB of num1 == 0, jump to next iteration
+BRNE next
+;if LSB of num1 == 1, update answer
+LDA ans,d
+ADDA num2,d
+STA ans,d
+ 
+;shift num1 right once
+next: LDA num1,d
+ASRA
+STA num1,d
+;shift num2 left once
+LDA num2,d
+ASLA
+STA num2,d
+;i++
+LDX i,d
+ADDX 0x0001,i
+STX i,d
+;repeat loop
+BR loop
+;output second part of feedback
+end: DECO ans,d
+STOP ;stop program execution
+ 
+str1: .ASCII &amp;quot; * \x00&amp;quot;
+str2: .ASCII &amp;quot; = \x00&amp;quot;
+.END ;terminate program
